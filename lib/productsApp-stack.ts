@@ -2,12 +2,14 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaNodeJS from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as cdk from 'aws-cdk-lib';
 import * as dynamoDB from 'aws-cdk-lib/aws-dynamodb';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 
 import { Construct } from 'constructs'
 export class ProductsAppStack extends cdk.Stack {
   readonly productsFetchHandler: lambdaNodeJS.NodejsFunction;
   readonly productsAdminHandler: lambdaNodeJS.NodejsFunction;
   readonly productsTable: dynamoDB.Table;
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
     this.productsTable = new dynamoDB.Table(this, 'ProductsTable', {
@@ -21,6 +23,10 @@ export class ProductsAppStack extends cdk.Stack {
       writeCapacity: 1,
       readCapacity: 1,
     });
+    //Products Layer
+    const productsLayerArn = ssm.StringParameter.valueForStringParameter(this, "ProductsLayerVersionArn");
+    const productsLayer = lambda.LayerVersion.fromLayerVersionArn(this, 'ProductsLayer', productsLayerArn);
+
     // Define a Lambda function
     this.productsFetchHandler = new lambdaNodeJS.NodejsFunction(this, 'ProductsFetchFunction', {
       functionName: 'ProductsFetchFunction',
@@ -36,6 +42,8 @@ export class ProductsAppStack extends cdk.Stack {
       environment: {
         TABLE_NAME: this.productsTable.tableName,
       },
+      layers: [productsLayer],
+      architecture: lambda.Architecture.ARM_64,
     });
 
     // Grant permissions to the Lambda function to access DynamoDB
@@ -56,6 +64,8 @@ export class ProductsAppStack extends cdk.Stack {
       environment: {
         TABLE_NAME: this.productsTable.tableName,
       },
+      layers: [productsLayer],
+      architecture: lambda.Architecture.ARM_64,
     })
 
     this.productsTable.grantReadWriteData(this.productsAdminHandler);
