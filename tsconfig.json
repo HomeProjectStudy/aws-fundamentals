@@ -22,7 +22,13 @@
     "strictPropertyInitialization": false,
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "/opt/nodejs20/productsLayer": [
+        "lambda/products/layers/productsLayer/nodejs20/productRepository"
+      ]
+    },
   },
   "exclude": [
     "node_modules",

@@ -14,7 +14,7 @@ export class ProductsAppLayersStack extends cdk.Stack {
 
     // create a Lambda layer
     this.productsLayers = new lambda.LayerVersion(this, 'ProductsLayer', {
-      code: lambda.Code.fromAsset('lambda/products/layers/layers/productsLayer'),
+      code: lambda.Code.fromAsset('lambda/products/layers/productsLayer'),
       layerVersionName: 'ProductsLayer',
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       description: 'A layer to share code between Lambda functions',
