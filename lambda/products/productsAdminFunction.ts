@@ -14,15 +14,25 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
 
 
   if (event.resource === "/products" && event.httpMethod === "POST") {
-    const product = JSON.parse(event.body!) as Product
+    try {
+      const product = JSON.parse(event.body!) as Product;
 
-    const productCreated = await productsRepository.createProduct(product)
+      const productCreated = await productsRepository.createProduct(product);
 
-    return {
-      statusCode: 201,
-      body: JSON.stringify(productCreated),
+      return {
+        statusCode: 201,
+        body: JSON.stringify(productCreated),
+      };
+    } catch (error) {
+      console.error((<Error>error).message)
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: (<Error>error).message
+        }),
+      }
+      
     }
-
   } else if (event.resource === "/products/{id}" && event.httpMethod === "PUT") {
     const id = event.pathParameters!.id as string
     const product = JSON.parse(event.body!) as Product

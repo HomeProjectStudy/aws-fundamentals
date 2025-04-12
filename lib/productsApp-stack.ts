@@ -33,7 +33,7 @@ export class ProductsAppStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_20_X,
       entry: 'lambda/products/productsFetchFunction.ts',
       handler: 'handler',
-      memorySize: 128,
+      memorySize: 512,
       timeout: cdk.Duration.seconds(5),
       bundling: {
         minify: true,
@@ -43,7 +43,6 @@ export class ProductsAppStack extends cdk.Stack {
         TABLE_NAME: this.productsTable.tableName,
       },
       layers: [productsLayer],
-      architecture: lambda.Architecture.ARM_64,
     });
 
     // Grant permissions to the Lambda function to access DynamoDB
@@ -55,7 +54,7 @@ export class ProductsAppStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_20_X,
       entry: 'lambda/products/productsAdminFunction.ts',
       handler: 'handler',
-      memorySize: 128,
+      memorySize: 512,
       timeout: cdk.Duration.seconds(5),
       bundling: {
         minify: true,
@@ -65,7 +64,6 @@ export class ProductsAppStack extends cdk.Stack {
         TABLE_NAME: this.productsTable.tableName,
       },
       layers: [productsLayer],
-      architecture: lambda.Architecture.ARM_64,
     })
 
     this.productsTable.grantReadWriteData(this.productsAdminHandler);

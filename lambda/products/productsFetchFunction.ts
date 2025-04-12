@@ -15,12 +15,23 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
 
 
   if (event.resource === "/products" && event.httpMethod === "GET") {
-    const products = await productsRepository.getAllProducts()
+    try {
+      const products = await productsRepository.getAllProducts()
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(products),
+      return {
+        statusCode: 200,
+        body: JSON.stringify(products),
+      }
+    } catch (error) {
+      console.error((<Error>error).message)
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          message: (<Error>error).message
+        }),
+      }
     }
+
   } else if (event.resource === "/products/{id}" && event.httpMethod === "GET") {
     const id = event.pathParameters!.id as string
 
