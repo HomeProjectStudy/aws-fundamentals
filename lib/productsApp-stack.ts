@@ -43,6 +43,7 @@ export class ProductsAppStack extends cdk.Stack {
         TABLE_NAME: this.productsTable.tableName,
       },
       layers: [productsLayer],
+      tracing: lambda.Tracing.ACTIVE
     });
 
     // Grant permissions to the Lambda function to access DynamoDB
@@ -64,6 +65,7 @@ export class ProductsAppStack extends cdk.Stack {
         TABLE_NAME: this.productsTable.tableName,
       },
       layers: [productsLayer],
+      tracing: lambda.Tracing.ACTIVE
     })
 
     this.productsTable.grantReadWriteData(this.productsAdminHandler);
