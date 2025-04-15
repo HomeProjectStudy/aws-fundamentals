@@ -38,6 +38,9 @@ export class ProductsAppStack extends cdk.Stack {
       bundling: {
         minify: true,
         sourceMap: false,
+        nodeModules: [
+          'aws-xray-sdk-core'
+        ]
       },
       environment: {
         TABLE_NAME: this.productsTable.tableName,
@@ -60,6 +63,9 @@ export class ProductsAppStack extends cdk.Stack {
       bundling: {
         minify: true,
         sourceMap: false,
+        nodeModules: [
+          'aws-xray-sdk-core'
+        ]
       },
       environment: {
         TABLE_NAME: this.productsTable.tableName,
