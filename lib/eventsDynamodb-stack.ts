@@ -3,7 +3,7 @@ import { Construct } from 'constructs'
 import * as dynamoDB from 'aws-cdk-lib/aws-dynamodb'
 
 
-export class EventsDynamoDdbtack extends cdk.Stack {
+export class EventsDynamoDdbStack extends cdk.Stack {
   readonly table: dynamoDB.Table;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps){
