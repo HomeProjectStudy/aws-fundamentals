@@ -29,7 +29,7 @@ export async function handler(
 
 function createEvent(event: ProductEvent) {
   const timeStamp = Date.now();
-  const ttl = ~~(timeStamp / 1000 + 5 * 60);
+  const ttl = ~~(timeStamp / 1000) + 5 * 60;
 
   return ddbClient
     .put({
