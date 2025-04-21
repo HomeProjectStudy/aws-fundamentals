@@ -39,7 +39,7 @@ export class ProductsAppStack extends cdk.Stack {
 
     // Create a events table for events products
     const productsEventsHandler = new lambdaNodeJS.NodejsFunction(this, 'ProductsEventsFunction', {
-      functionName: 'ProductsFetchFunction',
+      functionName: 'ProductEventsFunction',
       entry: 'lambda/products/productsEventsFunction.ts',
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handler',
