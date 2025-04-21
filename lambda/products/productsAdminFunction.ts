@@ -44,54 +44,62 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
       }
       
     }
-  } else if (event.resource === "/products/{id}" && event.httpMethod === "PUT") {
-    const id = event.pathParameters!.id as string
-    const product = JSON.parse(event.body!) as Product
+  } else if (event.resource === "/products/{id}" ) {
+    const productId = event.pathParameters!.id as string;
+    if (event.httpMethod === "PUT") {
+      console.log(`PUT /products/${productId}`);
+      try {
+        const product = JSON.parse(event.body!) as Product;
+        const updatedProduct = await productsRepository.updateProduct(
+          productId,
+          product
+        );
 
-    try {
-      const productUpdated = await productsRepository.updateProduct(id, product)
-      const response = await sendProductEvent(productUpdated,
-        ProductEventType.UPDATED,
-        "testeUPDATED@teste.com",
-        lambdaRequestId
-      )
-      console.log(`Event sent to product events function UPDATED: ${JSON.stringify(response)}`)
-      return {
-        statusCode: 200,
-        body: JSON.stringify(productUpdated),
+        const response = await sendProductEvent(
+          updatedProduct,
+          ProductEventType.UPDATED,
+          "userUpdated@gmail.com",
+          lambdaRequestId
+        );
+
+        console.log(response);
+
+        return {
+          statusCode: 200,
+          body: JSON.stringify(updatedProduct),
+        };
+      } catch (ConditionalCheckFailedException) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({
+            message: "Product not found",
+          }),
+        };
       }
-    } catch (ConditionalCheckFailedException) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({
-          message: 'Product not found'
-        }),
-      }
+    } else if (event.httpMethod === "DELETE") {
+      console.log(`DELETE /products/${productId}`);
+      try {
+        const product = await productsRepository.deleteProduct(productId);
+        const response = await sendProductEvent(
+          product,
+          ProductEventType.DELETED,
+          "userDELETED@gmail.com",
+          lambdaRequestId
+        );
 
-    }
-
-  } else if (event.resource === "/products/{id}" && event.httpMethod === "DELETE") {
-    const id = event.pathParameters!.id as string
-    try {
-      const product = await productsRepository.deleteProduct(id)
-      const response = await sendProductEvent(product,
-        ProductEventType.DELETED,
-        "testeDELETED@teste.com",
-        lambdaRequestId
-      )
-      console.log(`Event sent to product events function DELETED: ${JSON.stringify(response)}`)
-      return {
-        statusCode: 200,
-        body: JSON.stringify(product),
-      }
-
-    } catch (error) {
-      console.error((<Error>error).message)
-      return {
-        statusCode: 404,
-        body: JSON.stringify({
-          message: (<Error>error).message
-        }),
+        console.log(response);
+        return {
+          statusCode: 200,
+          body: JSON.stringify(product),
+        };
+      } catch (error) {
+        console.error((<Error>error).message);
+        return {
+          statusCode: 404,
+          body: JSON.stringify({
+            message: (<Error>error).message,
+          }),
+        };
       }
     }
   }
