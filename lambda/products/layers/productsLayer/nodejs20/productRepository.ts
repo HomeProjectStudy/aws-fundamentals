@@ -43,6 +43,25 @@ export class ProductRepository {
     }
   }
 
+  async getProductsByIds(productIds: string[]): Promise<Product[]> {
+    const keys: { id: string }[] = [];
+    productIds.forEach((productId) => {
+      keys.push({ id: productId });
+    });
+
+    const data = await this.dynamoDb
+      .batchGet({
+        RequestItems: {
+          [this.tableName]: {
+            Keys: keys,
+          },
+        },
+      })
+      .promise();
+
+    return data.Responses![this.tableName] as Product[];
+  }
+
   async createProduct(product: Product): Promise<Product> {
     const newProduct = {
       ...product,
