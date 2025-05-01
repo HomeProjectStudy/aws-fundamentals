@@ -34,6 +34,9 @@
       "/opt/nodejs/ordersLayer": [
         "lambda/orders/layers/ordersLayer/nodejs20/orderRepository"
       ],
+      "/opt/nodejs/ordersApiLayer": [
+        "lambda/orders/layers/ordersApiLayer/nodejs20/orderApi"
+      ],
     },
   },
   "exclude": [

@@ -41,6 +41,18 @@ export class Order extends cdk.Stack {
     const productsLayerArn = ssm.StringParameter.valueForStringParameter(this, "ProductsLayerVersionArn");
     const productsLayer = lambda.LayerVersion.fromLayerVersionArn(this, 'ProductsLayer', productsLayerArn);
 
+    // Orders API Layer
+    const ordersApiLayerArn = ssm.StringParameter.valueForStringParameter(
+      this,
+      "OrdersApiLayerVersionArn"
+    );
+
+    const ordersApiLayer = lambda.LayerVersion.fromLayerVersionArn(
+      this,
+      "OrdersApiLayerVersionArn",
+      ordersApiLayerArn
+    );
+
     this.ordersHandler = new lambdaNodeJS.NodejsFunction(
       this,
       "OrdersFunction",
@@ -63,7 +75,7 @@ export class Order extends cdk.Stack {
         layers: [
           ordersLayer,
           productsLayer,
-          // ordersApiLayer,
+          ordersApiLayer,
           // orderEventsLayer,
           // authUserInfoLayer,
         ],
